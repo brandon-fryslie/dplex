@@ -1,0 +1,21 @@
+{
+  "name": "dplex",
+  "version": "0.0.1",
+  "description": "Docker & SSH Multiplexing",
+  "main": "dplex.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brandon Fryslie",
+  "license": "ISC",
+  "dependencies": {
+    "coffee-react": "^5.0.0",
+    "colors": "^1.1.2",
+    "es6-promise": "^3.2.1",
+    "lodash": "^4.13.1",
+    "pty.js": "^0.3.1",
+    "react-blessed": "^0.1.7",
+    "term.js": "0.0.7",
+    "vorpal": "^1.11.2"
+  }
+}
