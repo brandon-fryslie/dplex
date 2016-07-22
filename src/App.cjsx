@@ -7,7 +7,6 @@ DockerLogs = require './DockerLogs'
 util = require './util'
 { _log } = util
 _ = require 'lodash'
-getRawBody = require 'raw-body'
 
 class App extends React.Component
   constructor: ->
@@ -55,7 +54,7 @@ class App extends React.Component
         _log "#{'Got error logs for container'.red} #{@state.containerName.cyan} of len #{buffer.length}"
       else if buffer.length > 0
         _log "Got logs for container #{@state.containerName.cyan} of len #{buffer.length}"
-        
+
       if buffer.length > 0
         @appendToLog buffer
 
