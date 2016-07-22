@@ -18,7 +18,7 @@ module.exports =
         if _.isString(s) then s else util.inspect s
 
       LOG_EL.insertBottom(strs.filter((s) -> !s.match(/^\s*$/)).join(' '))
-      LOG_EL.insertBottom('---')
+      LOG_EL.insertBottom('---'.blue)
       LOG_EL.setScrollPerc 100
     else
       console.log.apply console, str
