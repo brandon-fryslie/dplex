@@ -1,14 +1,17 @@
 React = require 'react'
 Stylesheet = require './Stylesheet'
 child_process = require 'child_process'
+_ = require 'lodash'
+{ _log } = require './util'
 
 class ContainerList extends React.Component
   constructor: (props) ->
     @state =
-      items: []
+      items: ['Loading', 'Containers']
       filterStr: ''
 
   componentDidMount: ->
+    @refs.hostInput.setValue @props.dockerHost
     @refs.hostInput.on 'blur', =>
       if @refs.hostInput.content isnt @props.dockerHost
         @refs.hostInput.submit()
@@ -33,12 +36,18 @@ class ContainerList extends React.Component
       DOCKER_HOST: dockerHost
       DOCKER_API_VERSION: 1.23
 
-    @props._log "Fetching containers for #{dockerHost.magenta}..."
+    _log "Fetching containers for #{dockerHost.magenta}..."
     child_process.exec "docker ps -a --format \"{{.Names}}\"", env: env, (err, stdin, stderr) =>
-      containers = stdin.split('\n').filter((s) -> !s.match /^\s*$/).reduce (accum, s) ->
-        accum.concat s.split(',')
-      , []
-      @props._log "Found #{containers.length} containers on #{dockerHost.magenta}"
+      if stderr
+        _log(stderr.red)
+        return
+
+      if err
+        _log err.message?.red ? 'unspecified error when fetching docker containers!'
+        return
+
+      containers = stdin.split('\n').filter((s) -> !s.match /^\s*$/).map (s) -> s.replace /,.*?$/, ''
+      _log "Found #{containers.length} containers on #{dockerHost.magenta}"
 
       @setState items: containers
 
@@ -56,10 +65,9 @@ class ContainerList extends React.Component
     <element
       left="50%"
       width="30%"
-      height="100%"
-    >
+      height="100%">
       <textbox
-      label="docker host"
+        label="docker host"
         ref="hostInput"
         inputOnFocus="true"
         onSubmit={ @props.onDockerHostChange.bind(@) }
@@ -67,11 +75,10 @@ class ContainerList extends React.Component
         keys="true"
         vi="true"
         height="15%"
-        border="line"
-      />
+        border="line" />
       <textbox
         label="filter hosts"
-        ref="hostFilter"
+        ref="hostFilter"  gs
         inputOnFocus="true"
         onKeypress={ @onHostFilter.bind(@) }
         mouse="true"
@@ -79,8 +86,7 @@ class ContainerList extends React.Component
         vi="true"
         height="15%"
         top="15%"
-        border="line"
-      />
+        border="line" />
       <list
         label="docker hosts"
         class={ [Stylesheet.focusable, Stylesheet.selectable] }
